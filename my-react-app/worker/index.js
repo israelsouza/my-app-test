@@ -2,8 +2,8 @@ import { Router } from 'itty-router';
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
 
 // Em um projeto Worker, o manifest de assets é importado assim.
-import manifestJSON from '__STATIC_CONTENT_MANIFEST';
-const assetManifest = JSON.parse(manifestJSON);
+// import manifestJSON from '__STATIC_CONTENT_MANIFEST';
+// const assetManifest = JSON.parse(manifestJSON);
 
 // Cria uma nova instância do roteador
 const router = Router();
@@ -15,7 +15,7 @@ const router = Router();
 
 router.get('/api/hello', () => {
 	const data = {
-		message: 'Olá do seu novo Cloudflare Worker!',
+		message: 'Olá do seu Cloudflare Worker!',
 		timestamp: new Date().toISOString(),
 	};
 	return new Response(JSON.stringify(data), {
@@ -28,7 +28,7 @@ router.get('/api/hello', () => {
 //  Esta parte é responsável por servir o frontend.
 // =================================================================
 
-async function handleAsset(event) {
+async function handleAsset(event, env) {
 	// A opção mapRequestToAsset é crucial para SPAs (Single Page Applications).
 	// Se uma rota como /profile não for encontrada como um arquivo,
 	// ela servirá o index.html para que o roteador do React possa assumir.
@@ -44,8 +44,8 @@ async function handleAsset(event) {
 	};
 
 	return await getAssetFromKV(event, {
-		ASSET_NAMESPACE: __STATIC_CONTENT, // Note que o binding é o mesmo do wrangler.jsonc
-		ASSET_MANIFEST: assetManifest,
+		ASSET_NAMESPACE: env.__STATIC_CONTENT, // Corrigido: Acessa o binding através do objeto 'env'
+		//ASSET_MANIFEST: assetManifest,
 		...options,
 	});
 }
@@ -58,6 +58,6 @@ export default {
 		if (url.pathname.startsWith('/api/')) {
 			return router.handle(request, env, ctx);
 		}
-		return handleAsset({ request, waitUntil: ctx.waitUntil.bind(ctx) });
+		return handleAsset({ request, waitUntil: ctx.waitUntil.bind(ctx) }, env); // Corrigido: Passa 'env' para o manipulador de assets
 	},
 };
