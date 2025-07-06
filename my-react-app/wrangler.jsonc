@@ -6,10 +6,14 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "my-react-app",
 	"compatibility_date": "2025-07-05",
-	"pages_build_output_dir": "./dist",
-	"observability": {
-		"enabled": true
-	}
+	// O ponto de entrada principal do seu Worker.
+	"main": "worker/index.js",
+
+	// Configuração para servir os arquivos estáticos do seu app React.
+	"assets": {
+		"binding": "__STATIC_CONTENT",
+		"directory": "./dist"
+	},
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
