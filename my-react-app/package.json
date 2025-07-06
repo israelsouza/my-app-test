@@ -12,6 +12,8 @@
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {
+		"@cloudflare/kv-asset-handler": "^0.4.0",
+		"itty-router": "^5.0.18",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0"
 	},
